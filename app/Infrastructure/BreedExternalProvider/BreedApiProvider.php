@@ -6,6 +6,7 @@ use App\Domain\Breed\Breed;
 use App\Domain\Breed\BreedExternalProvider\BreedExternalProviderInterface;
 use App\Domain\Breed\BreedSummary;
 use App\Domain\Breed\BreedSummaryList;
+use App\Domain\Breed\NotFoundBreedException;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Http;
 
@@ -23,12 +24,23 @@ final readonly class BreedApiProvider implements BreedExternalProviderInterface
         return new BreedSummaryList(...$breedSummaries);
     }
 
+    /**
+     * @throws NotFoundBreedException
+     */
     public function fetchOneByName(string $breedName): Breed
     {
-        return new Breed(
-            $breedName,
-            $this->fetch('/breed/' . $breedName . '/images')
-        );
+        try {
+            return new Breed(
+                $breedName,
+                $this->fetch('/breed/' . $breedName . '/images')
+            );
+        } catch (BreedApiProviderResponseException $e) {
+            if ($e->httpStatus === 404) {
+                throw new NotFoundBreedException($breedName);
+            }
+
+            throw $e;
+        }
     }
 
     public function fetchOneRandomly(): Breed
@@ -38,7 +50,12 @@ final readonly class BreedApiProvider implements BreedExternalProviderInterface
 
     private function fetch(string $urlPath): mixed
     {
-        $response = Http::get($this->buildUrl($urlPath));
+        $url = $this->buildUrl($urlPath);
+        $response = Http::get($url);
+
+        if ($response->failed()) {
+            throw new BreedApiProviderResponseException($url, $response->status());
+        }
 
         return Arr::get($response->json(), 'message');
     }
