@@ -19,7 +19,5 @@ final readonly class DelayedBreedSummaryListSynchronization implements Synchroni
 
         $synchronize = $this->synchronize;
         $synchronize();
-
-        $this->delay->refresh();
     }
 }
