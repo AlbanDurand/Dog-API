@@ -10,6 +10,9 @@ use App\Application\Breed\GetBreed\GetBreed;
 use App\Application\Breed\GetBreed\GetBreedInterface;
 use App\Application\Breed\GetRandomBreed\GetRandomBreed;
 use App\Application\Breed\GetRandomBreed\GetRandomBreedInterface;
+use App\Application\Breed\SynchronizeBreed\DelayedBreedSynchronization;
+use App\Application\Breed\SynchronizeBreed\SynchronizeBreed;
+use App\Application\Breed\SynchronizeBreed\SynchronizeBreedInterface;
 use App\Application\Breed\SynchronizeBreedSummaryList\DelayedBreedSummaryListSynchronization;
 use App\Application\Breed\SynchronizeBreedSummaryList\NextBreedSummaryListSynchronizationDelay;
 use App\Application\Breed\SynchronizeBreedSummaryList\SynchronizeBreedSummaryList;
@@ -21,6 +24,8 @@ use App\Infrastructure\BreedExternalProvider\BreedApiProvider;
 use App\Infrastructure\BreedRepository\BreedRepository;
 use App\Infrastructure\BreedSummaryListSynchronizationRepository\BreedSummaryListSynchronizationRepository;
 use App\Infrastructure\BreedSummaryListSynchronizationRepository\BreedSummaryListSynchronizationRepositoryInterface;
+use App\Infrastructure\BreedSynchronizationRepository\BreedSynchronizationRepository;
+use App\Infrastructure\BreedSynchronizationRepository\BreedSynchronizationRepositoryInterface;
 use Illuminate\Contracts\Foundation\Application;
 use Illuminate\Support\ServiceProvider;
 use Symfony\Component\Clock\Clock;
@@ -60,9 +65,26 @@ class BreedServiceProvider extends ServiceProvider
                     $synchronize,
                     new NextBreedSummaryListSynchronizationDelay(
                         $app->make(BreedSummaryListSynchronizationRepositoryInterface::class),
-                        new Clock(),
                         new Minute(30)
                     )
+                );
+            }
+        );
+
+        $this->app->singleton(
+            BreedSynchronizationRepositoryInterface::class,
+            BreedSynchronizationRepository::class
+        );
+
+        $this->app->singleton(SynchronizeBreedInterface::class, SynchronizeBreed::class);
+
+        $this->app->extend(
+            SynchronizeBreed::class,
+            function (SynchronizeBreed $synchronizeBreed, Application $app) {
+                return new DelayedBreedSynchronization(
+                    $synchronizeBreed,
+                    $app->make(BreedSynchronizationRepositoryInterface::class),
+                    new Minute(30)
                 );
             }
         );
