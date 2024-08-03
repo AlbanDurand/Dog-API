@@ -2,7 +2,9 @@
 
 namespace App\Domain\Breed;
 
-final readonly class BreedSummaryList
+use Traversable;
+
+final readonly class BreedSummaryList implements \IteratorAggregate
 {
 
     /** @var array<BreedSummary> */
@@ -11,5 +13,12 @@ final readonly class BreedSummaryList
     public function __construct(BreedSummary ...$breedSummaries)
     {
         $this->items = $breedSummaries;
+    }
+
+    public function getIterator(): Traversable
+    {
+        foreach ($this->items as $breedSummary) {
+            yield $breedSummary;
+        }
     }
 }
