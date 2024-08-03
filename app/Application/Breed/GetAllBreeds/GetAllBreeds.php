@@ -2,21 +2,23 @@
 
 namespace App\Application\Breed\GetAllBreeds;
 
-use App\Domain\Breed\BreedExternalProvider\BreedExternalProviderInterface;
-use App\Domain\Breed\BreedSummary;
+use App\Application\Breed\SynchronizeBreedSummaryList\SynchronizeBreedSummaryListInterface;
+use App\Domain\Breed\BreedRepositoryInterface;
 
 final readonly class GetAllBreeds implements GetAllBreedsInterface
 {
     public function __construct(
-        private BreedExternalProviderInterface $breedExternalProvider
+        private SynchronizeBreedSummaryListInterface $synchronizeBreedSummaryList,
+        private BreedRepositoryInterface $breedRepository
     ) {}
 
     public function __invoke(): array
     {
-        $breedSummaryList = $this->breedExternalProvider->fetchAll();
+        $synchronize = $this->synchronizeBreedSummaryList;
+        $synchronize();
 
-        return collect($breedSummaryList->items)
-            ->map(fn (BreedSummary $breedSummary) => $breedSummary->name)
-            ->toArray();
+        $breedSummaryList = $this->breedRepository->getAll();
+
+        return collect($breedSummaryList)->pluck('name')->toArray();
     }
 }
