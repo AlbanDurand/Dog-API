@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\MorphMany;
 
 class User extends Model
 {
@@ -20,4 +21,9 @@ class User extends Model
         'email',
         'location'
     ];
+
+    public function parks(): MorphMany
+    {
+        return $this->morphMany(Park::class, 'parkable');
+    }
 }
