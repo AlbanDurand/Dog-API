@@ -15,7 +15,9 @@ final class Park
     public function __construct(
         public readonly ParkId $id,
         private string $name
-    ) {}
+    ) {
+        $this->allowedBreeds = [];
+    }
 
     public function name(): string
     {

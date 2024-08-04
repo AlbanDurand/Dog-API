@@ -21,6 +21,7 @@ final class Owner
         private string $location
     ) {
         $this->ownedBreeds = [];
+        $this->attendedParks = [];
     }
 
     public function email(): Email
