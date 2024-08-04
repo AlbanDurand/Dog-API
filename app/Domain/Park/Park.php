@@ -9,7 +9,8 @@ use App\Domain\Breed\BreedSummaryList;
 
 final class Park
 {
-    private BreedSummaryList $allowedBreeds;
+    /** @var array<BreedId> */
+    private array $allowedBreeds;
 
     public function __construct(
         public readonly ParkId $id,
@@ -21,33 +22,23 @@ final class Park
         return $this->name;
     }
 
-    public function allowedBreeds(): BreedSummaryList
+    /**
+     * @return array<BreedId>
+     */
+    public function allowedBreeds(): array
     {
         return $this->allowedBreeds;
     }
 
-    public function allowBreeds(BreedSummaryList $allowedBreeds): void
+    public function allowBreeds(BreedId ...$allowedBreeds): void
     {
-        $this->allowedBreeds = $allowedBreeds;
+        $this->allowedBreeds = array_unique($allowedBreeds, SORT_REGULAR);
     }
 
-    public function allowAdditionalBreed(BreedSummary|Breed|BreedId $breed): void
+    public function allowAdditionalBreed(BreedId $breed): void
     {
-        $breedSummary = match (true) {
-            $breed instanceof BreedId => new BreedSummary($breed->value),
-            $breed instanceof Breed => new BreedSummary($breed->name),
-            default => $breed,
-        };
-
-        /** @var BreedSummary $allowedBreed */
-        foreach ($this->allowedBreeds as $allowedBreed) {
-            if ($allowedBreed->name === $breedSummary->name) {
-                return;
-            }
+        if (!in_array($breed, $this->allowedBreeds, true)) {
+            $this->allowedBreeds[] = $breed;
         }
-
-        $this->allowedBreeds = new BreedSummaryList(
-            $breedSummary, ...$this->allowedBreeds->items
-        );
     }
 }

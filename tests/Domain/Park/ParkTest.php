@@ -16,20 +16,16 @@ class ParkTest extends TestCase
     {
         $park = new Park(new ParkId('1'), 'Hyde Park');
 
-        $park->allowBreeds(new BreedSummaryList(
-            new BreedSummary('Eskimo'),
-            new BreedSummary('Labrador')
-        ));
+        $park->allowBreeds(
+            new BreedId('Eskimo'),
+            new BreedId('Labrador')
+        );
 
         $park->allowAdditionalBreed(new BreedId('Husky'));
-        $park->allowAdditionalBreed(new BreedSummary('Dalmatian'));
-        $park->allowAdditionalBreed(new Breed('Bluetick', []));
 
-        self::assertCount(5, $park->allowedBreeds()->items);
-        self::assertContainsEquals(new BreedSummary('Eskimo'), $park->allowedBreeds());
-        self::assertContainsEquals(new BreedSummary('Labrador'), $park->allowedBreeds());
-        self::assertContainsEquals(new BreedSummary('Husky'), $park->allowedBreeds());
-        self::assertContainsEquals(new BreedSummary('Dalmatian'), $park->allowedBreeds());
-        self::assertContainsEquals(new BreedSummary('Bluetick'), $park->allowedBreeds());
+        self::assertCount(3, $park->allowedBreeds());
+        self::assertContainsEquals(new BreedId('Eskimo'), $park->allowedBreeds());
+        self::assertContainsEquals(new BreedId('Labrador'), $park->allowedBreeds());
+        self::assertContainsEquals(new BreedId('Husky'), $park->allowedBreeds());
     }
 }

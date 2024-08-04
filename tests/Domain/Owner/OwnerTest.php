@@ -2,6 +2,7 @@
 
 namespace Tests\Domain\Owner;
 
+use App\Domain\Breed\BreedId;
 use App\Domain\Owner\Owner;
 use App\Domain\Owner\OwnerId;
 use App\Domain\Park\ParkId;
@@ -42,5 +43,21 @@ class OwnerTest extends TestCase
         $owner->attendAdditionalPark(new ParkId('1'));
 
         self::assertCount(1, $owner->attendedParks());
+    }
+
+    public function testOwnerOwnsTwoBreeds()
+    {
+        $owner = new Owner(
+            new OwnerId('1'),
+            new Email('david.tennant@gmail.com'),
+            'David Tennant',
+            'London'
+        );
+
+        $owner->ownBreeds(new BreedId('1'), new BreedId('2'), new BreedId('1'));
+
+        self::assertCount(2, $owner->ownedBreeds());
+        self::assertContainsEquals(new BreedId('1'), $owner->ownedBreeds());
+        self::assertContainsEquals(new BreedId('2'), $owner->ownedBreeds());
     }
 }

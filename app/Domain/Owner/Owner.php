@@ -2,16 +2,14 @@
 
 namespace App\Domain\Owner;
 
-use App\Domain\Breed\Breed;
 use App\Domain\Breed\BreedId;
-use App\Domain\Breed\BreedSummary;
-use App\Domain\Breed\BreedSummaryList;
 use App\Domain\Park\ParkId;
 use App\Domain\Shared\Email\Email;
 
 final class Owner
 {
-    private BreedSummaryList $ownedBreeds;
+    /** @var array<BreedId> */
+    private array $ownedBreeds;
 
     /** @var array<ParkId> */
     private array $attendedParks;
@@ -22,7 +20,7 @@ final class Owner
         private string $name,
         private string $location
     ) {
-        $this->ownedBreeds = new BreedSummaryList();
+        $this->ownedBreeds = [];
     }
 
     public function email(): Email
@@ -40,34 +38,24 @@ final class Owner
         return $this->location;
     }
 
-    public function ownedBreeds(): BreedSummaryList
+    /**
+     * @return array<BreedId>
+     */
+    public function ownedBreeds(): array
     {
         return $this->ownedBreeds;
     }
 
-    public function ownBreeds(BreedSummaryList $ownedBreeds): void
+    public function ownBreeds(BreedId ...$ownedBreeds): void
     {
-        $this->ownedBreeds = $ownedBreeds;
+        $this->ownedBreeds = array_unique($ownedBreeds, SORT_REGULAR);
     }
 
-    public function ownNewBreed(BreedSummary|Breed|BreedId $breed): void
+    public function ownAdditionalBreed(BreedId $breed): void
     {
-        $breedSummary = match (true) {
-            $breed instanceof BreedId => new BreedSummary($breed->value),
-            $breed instanceof Breed => new BreedSummary($breed->name),
-            default => $breed,
-        };
-
-        /** @var BreedSummary $breedSummary */
-        foreach ($this->ownedBreeds as $ownedBreedSummary) {
-            if ($ownedBreedSummary->name === $breedSummary->name) {
-                return;
-            }
+        if (!in_array($breed, $this->ownedBreeds, true)) {
+            $this->ownedBreeds[] = $breed;
         }
-
-        $this->ownedBreeds = new BreedSummaryList(
-            $breedSummary, ...$this->ownedBreeds->items
-        );
     }
 
     /**
@@ -86,7 +74,7 @@ final class Owner
     public function attendAdditionalPark(ParkId $parkId): void
     {
         if ($this->canAttendPark($parkId) === false) {
-            $this->attendedParks = array_merge($this->attendedParks, [$parkId]);
+            $this->attendedParks[] = $parkId;
         }
     }
 
