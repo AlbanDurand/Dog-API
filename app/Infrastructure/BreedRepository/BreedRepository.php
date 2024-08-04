@@ -2,13 +2,20 @@
 
 namespace App\Infrastructure\BreedRepository;
 
+use App\Domain\Breed\AvailablePark;
 use App\Domain\Breed\Breed;
 use App\Domain\Breed\BreedId;
+use App\Domain\Breed\BreedOwner;
 use App\Domain\Breed\BreedRepositoryInterface;
 use App\Domain\Breed\BreedSummary;
 use App\Domain\Breed\BreedSummaryList;
+use App\Domain\Owner\OwnerId;
+use App\Domain\Park\ParkId;
+use App\Domain\Shared\Email\Email;
 use App\Models\Breed as BreedModel;
 use App\Models\Image;
+use App\Models\Park;
+use App\Models\User;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Support\Arr;
 
@@ -36,7 +43,21 @@ final readonly class BreedRepository implements BreedRepositoryInterface
         return $breedModel !== null
             ? new Breed(
                 $breedModel->name,
-                $breedModel->images->map(fn (Image $image): string => $image->path)->toArray()
+                $breedModel->images->map(fn (Image $image): string => $image->path)->toArray(),
+                $breedModel->users
+                    ->map(function (User $user): BreedOwner {
+                        return new BreedOwner(
+                            new OwnerId($user->id),
+                            new Email($user->email),
+                            $user->name,
+                            $user->location
+                        );
+                    })->toArray(),
+                $breedModel->parks
+                    ->map(function (Park $park): AvailablePark {
+                        return new AvailablePark(new ParkId($park->id), $park->name);
+                    })
+                    ->toArray()
             )
             : null;
     }
