@@ -24,6 +24,11 @@ class User extends Model
 
     public function parks(): MorphMany
     {
-        return $this->morphMany(Park::class, 'parkable');
+        return $this->morphToMany(Park::class, 'parkable');
+    }
+
+    public function breeds(): MorphMany
+    {
+        return $this->morphToMany(Breed::class, 'breedable');
     }
 }
