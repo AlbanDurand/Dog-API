@@ -21,9 +21,9 @@ class ParkTest extends TestCase
             new BreedSummary('Labrador')
         ));
 
-        $park->allowNewBreed(new BreedId('Husky'));
-        $park->allowNewBreed(new BreedSummary('Dalmatian'));
-        $park->allowNewBreed(new Breed('Bluetick', []));
+        $park->allowAdditionalBreed(new BreedId('Husky'));
+        $park->allowAdditionalBreed(new BreedSummary('Dalmatian'));
+        $park->allowAdditionalBreed(new Breed('Bluetick', []));
 
         self::assertCount(5, $park->allowedBreeds()->items);
         self::assertContainsEquals(new BreedSummary('Eskimo'), $park->allowedBreeds());

@@ -31,7 +31,7 @@ final class Park
         $this->allowedBreeds = $allowedBreeds;
     }
 
-    public function allowNewBreed(BreedSummary|Breed|BreedId $breed): void
+    public function allowAdditionalBreed(BreedSummary|Breed|BreedId $breed): void
     {
         $breedSummary = match (true) {
             $breed instanceof BreedId => new BreedSummary($breed->value),
