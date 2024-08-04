@@ -6,11 +6,15 @@ use App\Domain\Breed\Breed;
 use App\Domain\Breed\BreedId;
 use App\Domain\Breed\BreedSummary;
 use App\Domain\Breed\BreedSummaryList;
+use App\Domain\Park\ParkId;
 use App\Domain\Shared\Email\Email;
 
 final class Owner
 {
     private BreedSummaryList $ownedBreeds;
+
+    /** @var array<ParkId> */
+    private array $attendedParks;
 
     public function __construct(
         public readonly OwnerId $id,
@@ -64,5 +68,30 @@ final class Owner
         $this->ownedBreeds = new BreedSummaryList(
             $breedSummary, ...$this->ownedBreeds->items
         );
+    }
+
+    /**
+     * @return array<ParkId>
+     */
+    public function attendedParks(): array
+    {
+        return $this->attendedParks;
+    }
+
+    public function attendParks(ParkId ...$parkIds): void
+    {
+        $this->attendedParks = array_unique($parkIds, SORT_REGULAR);
+    }
+
+    public function attendAdditionalPark(ParkId $parkId): void
+    {
+        if ($this->canAttendPark($parkId) === false) {
+            $this->attendedParks = array_merge($this->attendedParks, [$parkId]);
+        }
+    }
+
+    public function canAttendPark(ParkId $parkId): bool
+    {
+        return in_array($parkId, $this->attendedParks);
     }
 }
