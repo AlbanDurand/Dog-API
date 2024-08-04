@@ -10,6 +10,13 @@ use App\Models\Park as ParkModel;
 
 final readonly class ParkRepository implements ParkRepositoryInterface
 {
+    public function getAll(): array
+    {
+        $models = ParkModel::orderBy('name')->get();
+
+        return $models->map(fn (ParkModel $model): Park => $this->mapFromModel($model))->toArray();
+    }
+
     public function findOne(ParkId $id): ?Park
     {
         $model = ParkModel::find($id->value);

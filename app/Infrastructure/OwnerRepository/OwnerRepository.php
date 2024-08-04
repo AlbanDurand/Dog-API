@@ -34,7 +34,7 @@ final readonly class OwnerRepository implements OwnerRepositoryInterface
     {
         $users = User::orderBy('name')->get();
 
-        return array_map([$this, 'mapFromUser'], $users);
+        return $users->map(fn (User $user): Owner => $this->mapFromUser($user))->toArray();
     }
 
     public function findOne(OwnerId $id): ?Owner
