@@ -13,6 +13,10 @@
             <directory>tests/Domain</directory>
         </testsuite>
 
+        <testsuite name="Http">
+            <directory>tests/Http</directory>
+        </testsuite>
+
         <testsuite name="Infrastructure">
             <directory>tests/Infrastructure</directory>
         </testsuite>

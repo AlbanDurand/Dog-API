@@ -2,6 +2,8 @@
 
 namespace App\Providers;
 
+use App\Application\Owner\AssociateWithModel\AssociateWithModel;
+use App\Application\Owner\AssociateWithModel\AssociateWithModelInterface;
 use App\Application\Owner\AttendToAdditionalPark\AttendToAdditionalPark;
 use App\Application\Owner\OwnAdditionalBreed\OwnAdditionalBreed;
 use App\Domain\Owner\AttendToAdditionalPark\AttendToAdditionalParkInterface;
@@ -20,6 +22,7 @@ class OwnerServiceProvider extends ServiceProvider
         $this->app->singleton(OwnerRepositoryInterface::class, OwnerRepository::class);
         $this->app->singleton(AttendToAdditionalParkInterface::class, AttendToAdditionalPark::class);
         $this->app->singleton(OwnAdditionalBreedInterface::class, OwnAdditionalBreed::class);
+        $this->app->singleton(AssociateWithModelInterface::class, AssociateWithModel::class);
     }
 
     /**
