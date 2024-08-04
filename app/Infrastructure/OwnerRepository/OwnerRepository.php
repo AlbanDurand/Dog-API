@@ -52,17 +52,11 @@ final readonly class OwnerRepository implements OwnerRepositoryInterface
 
         /** @var array<BreedId> $ownedBreeds */
         $ownedBreeds = $user->breeds->pluck('name')->map(fn (string $id) => new BreedId($id));
-
-        if ($ownedBreeds !== []) {
-            $owner->ownBreeds(...$ownedBreeds);
-        }
+        $owner->ownBreeds(...$ownedBreeds);
 
         /** @var array<ParkId> $attendedParks */
         $attendedParks = $user->parks->pluck('id')->map(fn (string $id) => new ParkId($id));
-
-        if ($attendedParks !== []) {
-            $owner->attendParks(...$attendedParks);
-        }
+        $owner->attendParks(...$attendedParks);
 
         return $owner;
     }
