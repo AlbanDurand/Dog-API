@@ -2,9 +2,9 @@
 
 namespace App\Domain\Breed;
 
-use Exception;
+use App\Domain\Shared\Exception\NotFoundEntityException;
 
-class NotFoundBreedException extends Exception
+class NotFoundBreedException extends NotFoundEntityException
 {
     public function __construct(string $breedName)
     {
