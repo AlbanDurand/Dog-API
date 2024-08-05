@@ -1,9 +1,17 @@
 ## About the API
-The requested features are stored in the `./app/Application` directory.
 
-The implemented repositories are stored in the `./app/Infrastructure` directory. Those implementations actually use Eloquent models under the hood.
+The app is divided in 3 main parts.
 
-The business logic is in the `./app/Domain` directory.
+### Domain (`./app/Domain`)
+All the business logic is there. It allows to centralize all entities and interactions between them in one place without polluting the rest of the app.
+
+### Infrastructure (`./app/Infrastructure`)
+Components interacting with services external to the application can be found here. In the context of this app, we have:
+- the repositories communicating with the MySQL database
+- a class (`./app/Infrastructure/BreedExternalProvider/BreedApiProvider.php`) responsible for fetching data from the external API provider 
+
+### Application (`./app/Application`)
+The implemented features of the API are there.
 
 ## Start the API
 
@@ -17,9 +25,11 @@ php artisan key:generate
 php artisan migrate
 ```
 
-In the `.env` file, set `SESSION_DRIVER` to `cookie`
+## Tests
+Enter the following command to run automated tests: `./vendor/bin/sail test`
 
-To run tests: `./vendor/bin/sail test`
+All tests are stored in the `./tests` directory.
+
 
 ## Endpoints
 | Title                          | Method | URL                                        |
@@ -45,6 +55,7 @@ php artisan db:seed --class=ParkSeeder
 
 ### Associating a park to a user
 ```shell
+# Don't forget to replace {userId} and {parkId} with real values
 curl -X POST http://localhost/user/{userId}/associate \
     -H "Content-Type: application/json" \
     -d '{ "relatedModelType": "park", "relatedModelId": "{parkId}" }'
@@ -52,6 +63,7 @@ curl -X POST http://localhost/user/{userId}/associate \
 
 ### Associating a breed to a user
 ```shell
+# Don't forget to replace {userId} and {breedId} with real values
 curl -X POST http://localhost/user/{userId}/associate \
     -H "Content-Type: application/json" \
     -d '{ "relatedModelType": "breed", "relatedModelId": "{breedId}" }'
@@ -59,6 +71,7 @@ curl -X POST http://localhost/user/{userId}/associate \
 
 ### Associating a breed to a park
 ```shell
+# Don't forget to replace {parkId} and {breedId} with real values
 curl -X POST http://localhost/park/{parkId}/breed \
     -H "Content-Type: application/json" \
     -d '{ "breedId": "{breedId}" }'
