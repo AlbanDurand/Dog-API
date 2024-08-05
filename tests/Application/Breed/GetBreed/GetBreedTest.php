@@ -51,6 +51,7 @@ class GetBreedTest extends TestCase
             new BreedDto(
                 'husky',
                 [],
+                [],
                 [
                     [
                         'id' => '1',

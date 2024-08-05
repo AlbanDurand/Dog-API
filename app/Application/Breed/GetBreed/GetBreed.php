@@ -12,6 +12,7 @@ use App\Domain\Breed\BreedId;
 use App\Domain\Breed\BreedOwner;
 use App\Domain\Breed\BreedRepositoryInterface;
 use App\Domain\Breed\NotFoundBreedException;
+use App\Domain\Breed\SubBreed;
 
 final readonly class GetBreed implements GetBreedInterface
 {
@@ -41,6 +42,9 @@ final readonly class GetBreed implements GetBreedInterface
     {
         return new BreedDto(
             $breed->name,
+            array_map(function (SubBreed $subBreed): string {
+                return $subBreed->name;
+            }, $breed->subBreeds),
             $breed->imagePaths,
             array_map(function (BreedOwner $owner): array {
                 return [

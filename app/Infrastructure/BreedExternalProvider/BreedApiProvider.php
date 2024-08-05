@@ -7,6 +7,7 @@ use App\Domain\Breed\BreedExternalProvider\BreedExternalProviderInterface;
 use App\Domain\Breed\BreedSummary;
 use App\Domain\Breed\BreedSummaryList;
 use App\Domain\Breed\NotFoundBreedException;
+use App\Domain\Breed\SubBreed;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Http;
 
@@ -30,10 +31,16 @@ final readonly class BreedApiProvider implements BreedExternalProviderInterface
     public function fetchOneByName(string $breedName): Breed
     {
         try {
-            return new Breed(
-                $breedName,
-                $this->fetch('/breed/' . $breedName . '/images')
+            /** @var array<SubBreed> $subBreeds */
+            $subBreeds = array_map(
+                fn (string $subBreedName): SubBreed => new SubBreed($subBreedName),
+                $this->fetch('/breed/' . $breedName . '/list')
             );
+
+            /** @var array<string> $images */
+            $images = $this->fetch('/breed/' . $breedName . '/images');
+
+            return new Breed($breedName, $subBreeds, $images);
         } catch (BreedApiProviderResponseException $e) {
             if ($e->httpStatus === 404) {
                 throw new NotFoundBreedException($breedName);

@@ -4,16 +4,21 @@ namespace App\Domain\Breed;
 
 final readonly class Breed
 {
+    /**
+     * @param array<SubBreed>  $subBreeds
+     * @param array<string>  $imagePaths
+     * @param array<BreedOwner>  $owners
+     * @param array<AvailablePark>  $parks
+     */
     public function __construct(
         public string $name,
 
-        /** @param array<string> $imagePaths */
+        public array $subBreeds = [],
+
         public array $imagePaths = [],
 
-        /** @param array<BreedOwner> $owners */
         public array $owners = [],
 
-        /** @param array<AvailablePark> $parks */
         public array $parks = []
     ) {}
 }

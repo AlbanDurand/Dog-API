@@ -31,4 +31,9 @@ class Breed extends Model
     {
         return $this->morphedByMany(Park::class, 'breedable');
     }
+
+    public function subBreeds()
+    {
+        return $this->morphedByMany(SubBreed::class, 'breedable');
+    }
 }
